@@ -11,8 +11,8 @@ export class Player extends Phaser.Sprite {
     this.rightArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
     this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.UP)
 
-    this.speed = 3.5
-    this.jumpHeight = -400
+    this.speed = 10
+    this.jumpHeight = -800
   }
 
   update () {
