@@ -1,0 +1,40 @@
+import Phaser from 'phaser'
+import config from '../config'
+
+export class Player extends Phaser.Sprite {
+  constructor ({ game, x, y, asset }) {
+    super(game, x, y, asset)
+    this.anchor.setTo(0.5)
+    this.game.physics.arcade.enable(this)
+    // this.body.gravity.y = 500
+    this.leftArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT)
+    this.rightArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
+    this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.UP)
+
+    this.speed = 3.5
+    this.jumpHeight = -400
+  }
+
+  update () {
+    if (this.leftArrow.isDown) {
+      this.position.x -= this.speed
+      this.angle -= this.speed
+    } else if (this.rightArrow.isDown) {
+      this.position.x += this.speed
+      this.angle += this.speed
+    }
+    if (this.jumpButton.isDown && (this.body.onFloor() || this.body.touching.down)) {
+      this.body.velocity.y = this.jumpHeight;
+    }
+    this.checkWorldBounds()
+  }
+
+  checkWorldBounds () {
+    if (this.position.x > config.gameWidth - 30) {
+      this.position.x = config.gameWidth - 30
+    }
+    if (this.position.x < 10) {
+      this.position.x = 10
+    }
+  }
+}
