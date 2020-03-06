@@ -21,9 +21,8 @@ export default class extends Phaser.State {
     this.platforms.setAll('anchor.x', 0.5)
     this.platforms.setAll('anchor.y', 1)
     this.platforms.setAll('outOfBoundsKill', true)
-    this.platforms.setAll('immovable', true)
+    this.platforms.setAll('body.immovable', true)
     this.platforms.setAll('checkWorldBounds', true)
-    this.platforms.setAll('body.allowGravity', false)
 
 
     //  Set the world (global) gravity
@@ -31,7 +30,7 @@ export default class extends Phaser.State {
     this.game.physics.arcade.gravity.x = 0;
     this.player = new Player({
       game: this.game,
-      x: this.world.centerX,
+      x: this.world.centerX - 500,
       y: this.world.bounds.bottom - 230,
       asset: 'player'
     })
@@ -51,7 +50,6 @@ export default class extends Phaser.State {
 
       platform.reset(this.world.bounds.right, this.rnd.integerInRange(500, this.world.bounds.bottom - 400))
       platform.body.velocity.x = -300
-      platform.body.velocity.y = 0
       platform.scale.set(10, 1)
       this.platformTime = this.game.time.now + 1500;
     }
