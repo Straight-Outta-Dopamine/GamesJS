@@ -24,6 +24,14 @@ export default class extends Phaser.State {
     this.bgs.setAll('body.immovable', true)
     this.bgs.setAll('checkWorldBounds', true)
 
+    this.startBg = this.game.add.sprite(0, 0, 'bg')
+    this.game.physics.enable(this.startBg, Phaser.Physics.ARCADE)
+    this.startBg.scale.set(1.2, 1)
+    this.startBg.enableBody = true
+    this.startBg.body.immovable = true
+    this.startBg.body.checkWorldBounds = true
+    this.startBg.body.velocity.x = -300
+
     this.platformTime = 200
     this.platforms = this.game.add.group()
     this.platforms.enableBody = true
@@ -36,18 +44,27 @@ export default class extends Phaser.State {
     this.platforms.setAll('checkWorldBounds', true)
 
 
+    this.startPlatform = this.game.add.sprite(this.world.centerX, this.world.bounds.bottom - 150, 'platform')
+    this.game.physics.enable(this.startPlatform, Phaser.Physics.ARCADE)
+    this.startPlatform.scale.set(1.2, 0.3)
+    this.startPlatform.enableBody = true
+    this.startPlatform.body.immovable = true
+    this.startPlatform.body.checkWorldBounds = true
+    this.startPlatform.body.velocity.x = -300
+
+
     //  Set the world (global) gravity
     this.game.physics.arcade.gravity.y = 0;
     this.game.physics.arcade.gravity.x = 0;
     this.player = new Player({
       game: this.game,
-      x: this.world.centerX - 500,
+      x: this.world.centerX,
       y: this.world.bounds.bottom - 230,
       asset: 'player'
     })
     this.player.body.gravity.y = 1000;
     this.player.body.collideWorldBounds = true
-    this.game.physics.enable(this.platforms, Phaser.Physics.ARCADE);
+    this.game.physics.enable(this.platforms, Phaser.Physics.ARCADE)
     this.player.smoothed = false
     this.player.scale.set(0.5)
 
@@ -73,11 +90,12 @@ export default class extends Phaser.State {
       this.bgTime = this.game.time.now + 2000
     }
     this.game.physics.arcade.collide(this.player, this.platforms)
+    this.game.physics.arcade.collide(this.player, this.startPlatform)
   }
 
   render () {
-    /* if (__DEV__) {
-      this.game.debug.spriteInfo(this.player, 32, 32)
-    } */
+    // if (__DEV__) {
+    //   this.game.debug.spriteInfo(this.startBg, 32, 32)
+    // }
   }
 }

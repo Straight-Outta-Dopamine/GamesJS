@@ -15,7 +15,7 @@ export class Player extends Phaser.Sprite {
   }
 
   update () {
-    this.body.velocity.x = -300
+    // this.body.velocity.x = -300
     if (this.leftArrow.isDown) {
       this.position.x -= this.speed
       this.angle -= this.speed
