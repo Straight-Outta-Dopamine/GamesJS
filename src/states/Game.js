@@ -13,6 +13,17 @@ export default class extends Phaser.State {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
 
+    this.bgTime = 200
+    this.bgs = this.game.add.group()
+    this.bgs.enableBody = true
+    this.bgs.physicsBodyType = Phaser.Physics.ARCADE
+    this.bgs.createMultiple(50, 'bg')
+    this.bgs.setAll('anchor.x', 0.5)
+    this.bgs.setAll('anchor.y', 1)
+    this.bgs.setAll('outOfBoundsKill', true)
+    this.bgs.setAll('body.immovable', true)
+    this.bgs.setAll('checkWorldBounds', true)
+
     this.platformTime = 200
     this.platforms = this.game.add.group()
     this.platforms.enableBody = true
@@ -38,7 +49,6 @@ export default class extends Phaser.State {
     this.player.body.collideWorldBounds = true
     this.game.physics.enable(this.platforms, Phaser.Physics.ARCADE);
     this.player.smoothed = false
-    this.player.enab = false
     this.player.scale.set(0.5)
 
     this.game.add.existing(this.player)
@@ -50,8 +60,17 @@ export default class extends Phaser.State {
 
       platform.reset(this.world.bounds.right, this.rnd.integerInRange(500, this.world.bounds.bottom - 400))
       platform.body.velocity.x = -300
-      platform.scale.set(10, 1)
+      platform.scale.set(0.4, 0.3)
       this.platformTime = this.game.time.now + 1500;
+    }
+    if (this.game.time.now > this.bgTime) {
+      const bg = this.bgs.getFirstExists(false)
+
+      bg.reset(this.world.bounds.right, this.world.bounds.bottom)
+      bg.sendToBack()
+      bg.body.velocity.x = -300
+      bg.scale.set(1.2, 1)
+      this.bgTime = this.game.time.now + 2000
     }
     this.game.physics.arcade.collide(this.player, this.platforms)
   }

@@ -6,7 +6,6 @@ export class Player extends Phaser.Sprite {
     super(game, x, y, asset)
     this.anchor.setTo(0.5)
     this.game.physics.arcade.enable(this)
-    // this.body.gravity.y = 500
     this.leftArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT)
     this.rightArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
     this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.UP)
@@ -16,6 +15,7 @@ export class Player extends Phaser.Sprite {
   }
 
   update () {
+    this.body.velocity.x = -300
     if (this.leftArrow.isDown) {
       this.position.x -= this.speed
       this.angle -= this.speed
