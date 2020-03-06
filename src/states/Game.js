@@ -12,7 +12,6 @@ export default class extends Phaser.State {
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-
     this.bgTime = 200
     this.bgs = this.game.add.group()
     this.bgs.enableBody = true
@@ -43,6 +42,14 @@ export default class extends Phaser.State {
     this.platforms.setAll('body.immovable', true)
     this.platforms.setAll('checkWorldBounds', true)
 
+    this.drinks = this.game.add.group()
+    this.drinks.enableBody = true
+    this.drinks.physicsBodyType = Phaser.Physics.ARCADE
+    this.drinks.createMultiple(50, 'drink')
+    this.drinks.setAll('anchor.x', 0.5)
+    this.drinks.setAll('anchor.y', 1)
+    this.drinks.setAll('outOfBoundsKill', true)
+    this.drinks.setAll('body.immovable', true)
 
     this.startPlatform = this.game.add.sprite(this.world.centerX, this.world.bounds.bottom - 150, 'platform')
     this.game.physics.enable(this.startPlatform, Phaser.Physics.ARCADE)
@@ -52,6 +59,14 @@ export default class extends Phaser.State {
     this.startPlatform.body.checkWorldBounds = true
     this.startPlatform.body.velocity.x = -300
 
+    this.virusInitialX = this.world.bounds.left - 200
+    this.virusInitialY = this.world.centerY - 200
+    this.virus = this.game.add.sprite(this.world.bounds.left - 200, this.world.centerY - 200, 'virus')
+    this.game.physics.enable(this.virus, Phaser.Physics.ARCADE)
+    this.virus.scale.set(1.7)
+    this.virus.enableBody = true
+    this.virus.body.immovable = true
+    // this.virus.body.checkWorldBounds = true
 
     //  Set the world (global) gravity
     this.game.physics.arcade.gravity.y = 0;
@@ -69,13 +84,26 @@ export default class extends Phaser.State {
     this.player.scale.set(0.5)
 
     this.game.add.existing(this.player)
+
   }
 
   update () {
+    this.game.physics.arcade.moveToObject(this.virus, this.player, 30)
     if (this.game.time.now > this.platformTime) {
+      const platformX = this.world.bounds.right + 50
+      const platformY = this.rnd.integerInRange(500, this.world.bounds.bottom - 400)
+
       const platform = this.platforms.getFirstExists(false)
 
-      platform.reset(this.world.bounds.right, this.rnd.integerInRange(500, this.world.bounds.bottom - 400))
+      const rnd = this.rnd.integerInRange(1, 3)
+      if (rnd === 3) {
+        const drink = this.drinks.getFirstExists(false)
+        drink.reset(platformX, platformY - 30)
+        drink.scale.set(0.1)
+        drink.body.velocity.x = -300
+      }
+
+      platform.reset(platformX, platformY)
       platform.body.velocity.x = -300
       platform.scale.set(0.4, 0.3)
       this.platformTime = this.game.time.now + 1500;
@@ -91,11 +119,19 @@ export default class extends Phaser.State {
     }
     this.game.physics.arcade.collide(this.player, this.platforms)
     this.game.physics.arcade.collide(this.player, this.startPlatform)
+    this.game.physics.arcade.collide(this.player, this.drinks)
+    this.game.physics.arcade.overlap(this.drinks, this.player, this.drinkAndPlayerCollisionHandler, null, this)
   }
 
   render () {
     // if (__DEV__) {
     //   this.game.debug.spriteInfo(this.startBg, 32, 32)
     // }
+  }
+
+  drinkAndPlayerCollisionHandler (player, drink) {
+    drink.kill()
+
+    this.virus.reset(this.virusInitialX, this.virusInitialY)
   }
 }

@@ -18,6 +18,8 @@ export default class extends Phaser.State {
     this.load.image('tiles', 'assets/tiles/tiles.png')
     this.load.image('platform', 'assets/images/platform.jpg')
     this.load.image('bg', 'assets/images/bg.jpg')
+    this.load.image('virus', 'assets/images/virus.png')
+    this.load.image('drink', 'assets/images/drink.png')
     this.load.tilemap('level01', 'http://examples.phaser.io/assets/tilemaps/maps/features_test.json', null, Phaser.Tilemap.TILED_JSON)
   }
 
