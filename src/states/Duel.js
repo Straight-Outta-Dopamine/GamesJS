@@ -11,10 +11,16 @@ export default class extends Phaser.State {
     this.map = this.game.add.tilemap('level01')
     this.map.addTilesetImage('tiles')
 
+    this.ambulanceAudio = this.game.add.audio('ambulance')
+    this.ambulanceAudio.loopFull()
+
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
 
     this.nextFire = 0
     this.fireRate = 800
+
+    this.bg = this.game.add.sprite(0, 0, 'stomach')
+    this.bg.scale.set(2)
 
     this.bullets = this.game.add.group()
     this.bullets.enableBody = true
@@ -50,7 +56,7 @@ export default class extends Phaser.State {
       game: this.game,
       x: this.world.centerX,
       y: this.world.bounds.bottom - 100,
-      asset: 'player'
+      asset: 'player_duel'
     })
     // this.player.body.collideWorldBounds = true
     this.player.smoothed = false
@@ -68,6 +74,9 @@ export default class extends Phaser.State {
     if (this.game.input.activePointer.isDown) {
       this.fire()
     }
+
+    this.game.physics.arcade.overlap(this.viruses, this.bullets, this.virusAndBulletCollisionHandler, null, this)
+    this.game.physics.arcade.overlap(this.viruses, this.player, this.virusAndPlayerCollisionHandler, null, this)
   }
 
   fire () {
@@ -87,5 +96,14 @@ export default class extends Phaser.State {
     // if (__DEV__) {
     //   this.game.debug.spriteInfo(this.startBg, 32, 32)
     // }
+  }
+
+  virusAndBulletCollisionHandler(virus, bullet) {
+    virus.kill()
+    bullet.kill()
+  }
+
+  virusAndPlayerCollisionHandler(player, virus) {
+    player.kill()
   }
 }

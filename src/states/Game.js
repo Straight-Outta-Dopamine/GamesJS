@@ -51,6 +51,15 @@ export default class extends Phaser.State {
     this.drinks.setAll('outOfBoundsKill', true)
     this.drinks.setAll('body.immovable', true)
 
+    this.drinksBad = this.game.add.group()
+    this.drinksBad.enableBody = true
+    this.drinksBad.physicsBodyType = Phaser.Physics.ARCADE
+    this.drinksBad.createMultiple(50, 'drink_bad')
+    this.drinksBad.setAll('anchor.x', 0.5)
+    this.drinksBad.setAll('anchor.y', 1)
+    this.drinksBad.setAll('outOfBoundsKill', true)
+    this.drinksBad.setAll('body.immovable', true)
+
     this.ground = this.game.add.sprite(0, this.world.bounds.bottom - 50, 'platform')
     this.game.physics.enable(this.ground, Phaser.Physics.ARCADE)
     this.ground.scale.set(10, 10)
@@ -100,12 +109,20 @@ export default class extends Phaser.State {
 
       const platform = this.platforms.getFirstExists(false)
 
-      const rnd = this.rnd.integerInRange(1, 3)
+      let rnd = this.rnd.integerInRange(1, 3)
       if (rnd === 3) {
-        const drink = this.drinks.getFirstExists(false)
-        drink.reset(platformX, platformY - 30)
-        drink.scale.set(0.1)
-        drink.body.velocity.x = -300
+        rnd = this.rnd.integerInRange(1, 2)
+        if (rnd === 2) {
+          const drink = this.drinks.getFirstExists(false)
+          drink.reset(platformX, platformY - 30)
+          drink.scale.set(0.1)
+          drink.body.velocity.x = -300
+        } else {
+          const drink = this.drinksBad.getFirstExists(false)
+          drink.reset(platformX, platformY - 30)
+          drink.scale.set(0.1)
+          drink.body.velocity.x = -300
+        }
       }
 
       platform.reset(platformX, platformY)
@@ -126,6 +143,7 @@ export default class extends Phaser.State {
     this.game.physics.arcade.collide(this.player, this.ground)
     // this.game.physics.arcade.collide(this.player, this.drinks)
     this.game.physics.arcade.overlap(this.drinks, this.player, this.drinkAndPlayerCollisionHandler, null, this)
+    this.game.physics.arcade.overlap(this.drinksBad, this.player, this.drinkBadAndPlayerCollisionHandler, null, this)
     this.game.physics.arcade.overlap(this.virus, this.player, this.virusAndPlayerCollisionHandler, null, this)
   }
 
@@ -143,7 +161,15 @@ export default class extends Phaser.State {
     // this.virus.scale.set(this.virus.scale.x - 0.2, this.virus.scale.y - 0.2)
   }
 
+  drinkBadAndPlayerCollisionHandler (player, drink) {
+    drink.kill()
+
+    this.game.camera.shake(0.05, 2000)
+    // this.virus.reset(this.virusInitialX, this.virusInitialY)
+    // this.virus.scale.set(this.virus.scale.x - 0.2, this.virus.scale.y - 0.2)
+  }
+
   virusAndPlayerCollisionHandler(virus, player) {
-    virus.kill()
+    this.game.state.start('Duel')
   }
 }

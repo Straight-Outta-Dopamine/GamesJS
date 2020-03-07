@@ -15,17 +15,20 @@ export default class extends Phaser.State {
     //
     this.load.image('mushroom', 'assets/images/mushroom2.png')
     this.load.image('player', 'assets/images/ball.png')
+    this.load.image('player_duel', 'assets/images/ball_white.png')
     this.load.image('tiles', 'assets/tiles/tiles.png')
     this.load.image('platform', 'assets/images/platform.jpg')
     this.load.image('bg', 'assets/images/bg.jpg')
     this.load.image('virus', 'assets/images/virus.png')
     this.load.image('drink', 'assets/images/drink.png')
+    this.load.image('drink_bad', 'assets/images/drink_bad.png')
     this.load.image('bullet', 'assets/images/bullet.png')
+    this.load.image('stomach', 'assets/images/stomach.jpg')
+    this.load.audio('ambulance', 'assets/audio/ambulance.wav')
     this.load.tilemap('level01', 'http://examples.phaser.io/assets/tilemaps/maps/features_test.json', null, Phaser.Tilemap.TILED_JSON)
   }
 
   create () {
-    //this.state.start('Game')
-    this.state.start('Duel')
+    this.state.start('Game')
   }
 }
