@@ -30,8 +30,8 @@ export class Player extends Phaser.Sprite {
   }
 
   checkWorldBounds () {
-    if (this.position.x > config.gameWidth - 30) {
-      this.position.x = config.gameWidth - 30
+    if (this.position.x > config.gameWidth - 100) {
+      this.position.x = config.gameWidth - 100
     }
     if (this.position.x < 10) {
       this.position.x = 10
