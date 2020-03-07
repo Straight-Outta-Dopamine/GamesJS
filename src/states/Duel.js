@@ -1,6 +1,6 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
-import {Player} from '../sprites/Player'
+import config from "../config";
 import {DuelPlayer} from "../sprites/DuelPlayer";
 
 export default class extends Phaser.State {
@@ -16,14 +16,32 @@ export default class extends Phaser.State {
     this.nextFire = 0
     this.fireRate = 800
 
-    this.bullets = this.game.add.group();
-    this.bullets.enableBody = true;
-    this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
-    this.bullets.createMultiple(30, 'bullet', 0, false);
-    this.bullets.setAll('anchor.x', 0.5);
-    this.bullets.setAll('anchor.y', 0.5);
-    this.bullets.setAll('outOfBoundsKill', true);
-    this.bullets.setAll('checkWorldBounds', true);
+    this.bullets = this.game.add.group()
+    this.bullets.enableBody = true
+    this.bullets.physicsBodyType = Phaser.Physics.ARCADE
+    this.bullets.createMultiple(30, 'bullet', 0, false)
+    this.bullets.setAll('anchor.x', 0.5)
+    this.bullets.setAll('anchor.y', 0.5)
+    this.bullets.setAll('outOfBoundsKill', true)
+    this.bullets.setAll('checkWorldBounds', true)
+
+    this.viruses = this.game.add.physicsGroup(Phaser.Physics.ARCADE)
+    this.viruses.enableBody = true
+    this.viruses.physicsBodyType = Phaser.Physics.ARCADE
+    this.viruses.createMultiple(30, 'virus')
+    this.viruses.setAll('anchor.x', 0.5)
+    this.viruses.setAll('anchor.y', 0.5)
+    this.viruses.setAll('body.collideWorldBounds', true);
+    this.viruses.setAll('body.bounce.x', 1);
+    this.viruses.setAll('body.bounce.y', 1);
+
+    for (let i = 0; i < 10; i++) {
+      const virus = this.viruses.getFirstDead()
+      virus.scale.set(0.4)
+      const posX = this.rnd.integerInRange(100, config.gameWidth - 600)
+      const posY = this.rnd.integerInRange(100, this.world.bounds.bottom - 600)
+      virus.reset(posX, posY)
+    }
 
     //  Set the world (global) gravity
     this.game.physics.arcade.gravity.x = 0;
@@ -31,7 +49,7 @@ export default class extends Phaser.State {
     this.player = new DuelPlayer({
       game: this.game,
       x: this.world.centerX,
-      y: this.world.bounds.bottom - 230,
+      y: this.world.bounds.bottom - 100,
       asset: 'player'
     })
     // this.player.body.collideWorldBounds = true
@@ -42,7 +60,12 @@ export default class extends Phaser.State {
   }
 
   update () {
-    if (game.input.activePointer.isDown) {
+    this.game.physics.arcade.collide(this.viruses)
+
+    this.viruses.forEach(virus => {
+      this.game.physics.arcade.moveToObject(virus, this.player, 200)
+    })
+    if (this.game.input.activePointer.isDown) {
       this.fire()
     }
   }
