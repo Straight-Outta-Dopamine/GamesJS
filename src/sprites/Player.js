@@ -1,10 +1,12 @@
 import Phaser from 'phaser'
 import config from '../config'
 
-export class Player extends Phaser.Sprite {
-  constructor ({ game, x, y, asset }) {
-    super(game, x, y, asset)
-    this.anchor.setTo(0.5)
+export class Player extends Phaser.TileSprite {
+  constructor ({ game, x, y, width, height, key }) {
+    super(game, x, y, width, height, key)
+    // this.anchor.setTo(0.5)
+    this.animations.add('walk')
+    this.animations.add('idle', [4])
     this.game.physics.arcade.enable(this)
     this.leftArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT)
     this.rightArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
@@ -17,12 +19,21 @@ export class Player extends Phaser.Sprite {
   update () {
     // this.body.velocity.x = -300
     if (this.leftArrow.isDown) {
+      if (this.body.onFloor() ||this.body.touching.down) {
+        this.animations.play('walk', 24, true)
+      }
       this.position.x -= this.speed
-      this.angle -= this.speed
     } else if (this.rightArrow.isDown) {
+      if (this.body.onFloor() ||this.body.touching.down) {
+        this.animations.play('walk', 24, true)
+      }
       this.position.x += this.speed
-      this.angle += this.speed
+    } else {
+       this.animations.play('idle', 24, false)
     }
+    //if (!this.body.onFloor() && !this.body.touching.down) {
+    //   this.animations.play('idle', 24, false)
+    // }
     if (this.jumpButton.isDown && (this.body.onFloor() || this.body.touching.down)) {
       this.body.velocity.y = this.jumpHeight;
     }
@@ -39,9 +50,6 @@ export class Player extends Phaser.Sprite {
     }
     if (this.position.y > config.gameHeight - 1300) {
       this.position.y = config.gameHeight - 1300
-    }
-    if (this.position.y < 10) {
-      this.position.y = 10
     }
   }
 }

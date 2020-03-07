@@ -56,7 +56,7 @@ export default class extends Phaser.State {
     this.drinkBad = this.game.add.sprite(-2000, -2000, 'drink_bad')
     this.drinkBad.scale.set(2)
 
-    this.ground = this.game.add.sprite(0, this.world.bounds.bottom - 50, 'platform')
+    this.ground = this.game.add.sprite(0, this.world.bounds.bottom - 50, 'floor')
     this.game.physics.enable(this.ground, Phaser.Physics.ARCADE)
     this.ground.scale.set(10, 10)
     this.ground.enableBody = true
@@ -65,7 +65,9 @@ export default class extends Phaser.State {
 
     this.virusInitialX = this.world.bounds.left - 200
     this.virusInitialY = this.world.centerY - 200
-    this.virus = this.game.add.sprite(this.world.bounds.left - 200, this.world.centerY - 200, 'virus')
+    this.virus = this.game.add.tileSprite(this.world.bounds.left - 200, this.world.centerY - 200, 293, 336,'virus')
+    this.virus.animations.add('idle')
+    this.virus.animations.play('idle', 24, true)
     this.game.physics.enable(this.virus, Phaser.Physics.ARCADE)
     this.virus.scale.set(1)
     this.virus.enableBody = true
@@ -80,7 +82,9 @@ export default class extends Phaser.State {
       game: this.game,
       x: this.world.centerX,
       y: this.world.bounds.bottom - 230,
-      asset: 'player'
+      width: 260,
+      height: 352,
+      key: 'player'
     })
     this.player.body.gravity.y = 1000;
     // this.player.body.collideWorldBounds = true
@@ -94,7 +98,7 @@ export default class extends Phaser.State {
 
   update () {
     // this.game.physics.arcade.moveToObject(this.virus, this.player, 30)
-    this.virus.position.y = this.player.position.y - 300
+    this.virus.position.y = this.player.position.y - 100
 
     if (this.virus.body.velocity.x < 0 && this.virus.position.x < this.virusInitialX) {
       this.virus.body.velocity.x = 30

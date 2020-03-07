@@ -20,7 +20,7 @@ export default class extends Phaser.State {
     this.fireRate = 800
 
     this.bg = this.game.add.sprite(0, 0, 'stomach')
-    this.bg.scale.set(2)
+    this.bg.scale.set(1)
 
     this.bullets = this.game.add.group()
     this.bullets.enableBody = true
