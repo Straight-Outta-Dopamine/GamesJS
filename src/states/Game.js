@@ -1,5 +1,6 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
+import config from '../config'
 import {Player} from '../sprites/Player'
 
 export default class extends Phaser.State {
@@ -25,7 +26,6 @@ export default class extends Phaser.State {
 
     this.startBg = this.game.add.sprite(0, 0, 'bg')
     this.game.physics.enable(this.startBg, Phaser.Physics.ARCADE)
-    this.startBg.scale.set(1.2, 1)
     this.startBg.enableBody = true
     this.startBg.body.immovable = true
     this.startBg.body.checkWorldBounds = true
@@ -42,23 +42,19 @@ export default class extends Phaser.State {
     this.platforms.setAll('body.immovable', true)
     this.platforms.setAll('checkWorldBounds', true)
 
-    this.drinks = this.game.add.group()
-    this.drinks.enableBody = true
-    this.drinks.physicsBodyType = Phaser.Physics.ARCADE
-    this.drinks.createMultiple(50, 'drink')
-    this.drinks.setAll('anchor.x', 0.5)
-    this.drinks.setAll('anchor.y', 1)
-    this.drinks.setAll('outOfBoundsKill', true)
-    this.drinks.setAll('body.immovable', true)
+    this.crates = this.game.add.group()
+    this.crates.enableBody = true
+    this.crates.physicsBodyType = Phaser.Physics.ARCADE
+    this.crates.createMultiple(50, 'crate')
+    this.crates.setAll('anchor.x', 0.5)
+    this.crates.setAll('anchor.y', 1)
+    this.crates.setAll('outOfBoundsKill', true)
+    this.crates.setAll('body.immovable', true)
 
-    this.drinksBad = this.game.add.group()
-    this.drinksBad.enableBody = true
-    this.drinksBad.physicsBodyType = Phaser.Physics.ARCADE
-    this.drinksBad.createMultiple(50, 'drink_bad')
-    this.drinksBad.setAll('anchor.x', 0.5)
-    this.drinksBad.setAll('anchor.y', 1)
-    this.drinksBad.setAll('outOfBoundsKill', true)
-    this.drinksBad.setAll('body.immovable', true)
+    this.drink = this.game.add.sprite(-2000, -2000, 'drink')
+    this.drink.scale.set(2)
+    this.drinkBad = this.game.add.sprite(-2000, -2000, 'drink_bad')
+    this.drinkBad.scale.set(2)
 
     this.ground = this.game.add.sprite(0, this.world.bounds.bottom - 50, 'platform')
     this.game.physics.enable(this.ground, Phaser.Physics.ARCADE)
@@ -71,7 +67,7 @@ export default class extends Phaser.State {
     this.virusInitialY = this.world.centerY - 200
     this.virus = this.game.add.sprite(this.world.bounds.left - 200, this.world.centerY - 200, 'virus')
     this.game.physics.enable(this.virus, Phaser.Physics.ARCADE)
-    this.virus.scale.set(1.7)
+    this.virus.scale.set(1)
     this.virus.enableBody = true
     this.virus.body.immovable = true
     this.virus.body.velocity.x = 30
@@ -111,18 +107,10 @@ export default class extends Phaser.State {
 
       let rnd = this.rnd.integerInRange(1, 3)
       if (rnd === 3) {
-        rnd = this.rnd.integerInRange(1, 2)
-        if (rnd === 2) {
-          const drink = this.drinks.getFirstExists(false)
-          drink.reset(platformX, platformY - 30)
-          drink.scale.set(0.1)
-          drink.body.velocity.x = -300
-        } else {
-          const drink = this.drinksBad.getFirstExists(false)
-          drink.reset(platformX, platformY - 30)
-          drink.scale.set(0.1)
-          drink.body.velocity.x = -300
-        }
+        const crate = this.crates.getFirstExists(false)
+        crate.reset(platformX, platformY - 30)
+        crate.scale.set(0.5)
+        crate.body.velocity.x = -300
       }
 
       platform.reset(platformX, platformY)
@@ -133,17 +121,15 @@ export default class extends Phaser.State {
     if (this.game.time.now > this.bgTime) {
       const bg = this.bgs.getFirstExists(false)
 
-      bg.reset(this.world.bounds.right, this.world.bounds.bottom)
+      bg.reset(this.world.bounds.right, this.world.bounds.bottom + 300)
       bg.sendToBack()
       bg.body.velocity.x = -300
-      bg.scale.set(1.2, 1)
-      this.bgTime = this.game.time.now + 2000
+      this.bgTime = this.game.time.now + 2900
     }
     this.game.physics.arcade.collide(this.player, this.platforms)
     this.game.physics.arcade.collide(this.player, this.ground)
-    // this.game.physics.arcade.collide(this.player, this.drinks)
-    this.game.physics.arcade.overlap(this.drinks, this.player, this.drinkAndPlayerCollisionHandler, null, this)
-    this.game.physics.arcade.overlap(this.drinksBad, this.player, this.drinkBadAndPlayerCollisionHandler, null, this)
+    // this.game.physics.arcade.collide(this.player, this.crate)
+    this.game.physics.arcade.overlap(this.crates, this.player, this.crateAndPlayerCollisionHandler, null, this)
     this.game.physics.arcade.overlap(this.virus, this.player, this.virusAndPlayerCollisionHandler, null, this)
   }
 
@@ -153,23 +139,35 @@ export default class extends Phaser.State {
     // }
   }
 
-  drinkAndPlayerCollisionHandler (player, drink) {
-    drink.kill()
+  crateAndPlayerCollisionHandler (player, crate) {
+    crate.kill()
 
-    this.virus.body.velocity.x = -200
-    // this.virus.reset(this.virusInitialX, this.virusInitialY)
-    // this.virus.scale.set(this.virus.scale.x - 0.2, this.virus.scale.y - 0.2)
+    const rnd = this.rnd.integerInRange(1, 2)
+    const drinkSize = 0.6
+    const drinkX = this.world.centerX + 500
+    const drinkY = this.world.centerY - 300
+    if (rnd === 2) {
+      this.drink.position.x = drinkX
+      this.drink.position.y = drinkY
+      this.drink.scale.set(drinkSize)
+      this.virus.body.velocity.x = -200
+      setTimeout(() => {
+        this.drink.position.x = -2000
+        this.drink.position.y = -2000
+      }, 2000)
+    } else {
+      this.drinkBad.position.x = drinkX
+      this.drinkBad.position.y = drinkY
+      this.drinkBad.scale.set(drinkSize)
+      this.game.camera.shake(0.05, 2000)
+      setTimeout(() => {
+        this.drinkBad.position.x = -2000
+        this.drinkBad.position.y = -2000
+      }, 3000)
+    }
   }
 
-  drinkBadAndPlayerCollisionHandler (player, drink) {
-    drink.kill()
-
-    this.game.camera.shake(0.05, 2000)
-    // this.virus.reset(this.virusInitialX, this.virusInitialY)
-    // this.virus.scale.set(this.virus.scale.x - 0.2, this.virus.scale.y - 0.2)
-  }
-
-  virusAndPlayerCollisionHandler(virus, player) {
+  virusAndPlayerCollisionHandler (virus, player) {
     this.game.state.start('Duel')
   }
 }
