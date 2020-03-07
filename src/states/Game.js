@@ -138,7 +138,7 @@ export default class extends Phaser.State {
   drinkAndPlayerCollisionHandler (player, drink) {
     drink.kill()
 
-    this.virus.body.velocity.x = -180
+    this.virus.body.velocity.x = -200
     // this.virus.reset(this.virusInitialX, this.virusInitialY)
     // this.virus.scale.set(this.virus.scale.x - 0.2, this.virus.scale.y - 0.2)
   }
