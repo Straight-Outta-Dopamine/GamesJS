@@ -171,12 +171,6 @@ export default class extends Phaser.State {
     this.game.physics.arcade.overlap(this.virus, this.platforms, this.virusAndObstaclesCollisionHandler, null, this)
   }
 
-  render () {
-    // if (__DEV__) {
-    //   this.game.debug.spriteInfo(this.startBg, 32, 32)
-    // }
-  }
-
   crateAndPlayerCollisionHandler (player, crate) {
     crate.kill()
 
@@ -206,7 +200,7 @@ export default class extends Phaser.State {
   }
 
   virusAndPlayerCollisionHandler (virus, player) {
-    this.game.state.start('Duel')
+    this.state.start('Duel', true, false, {score: this.score})
   }
 
   virusAndObstaclesCollisionHandler () {

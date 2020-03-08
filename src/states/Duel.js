@@ -4,7 +4,9 @@ import config from "../config";
 import {DuelPlayer} from "../sprites/DuelPlayer";
 
 export default class extends Phaser.State {
-  init () { }
+  init (payload) {
+    this.score = +payload.score
+  }
   preload () { }
 
   create () {
@@ -101,18 +103,12 @@ export default class extends Phaser.State {
     }
   }
 
-  render () {
-    // if (__DEV__) {
-    //   this.game.debug.spriteInfo(this.startBg, 32, 32)
-    // }
-  }
-
   virusAndBulletCollisionHandler(virus, bullet) {
     virus.kill()
     bullet.kill()
   }
 
   virusAndPlayerCollisionHandler(player, virus) {
-    player.kill()
+    this.state.start('GameOver', true, false, {score: this.score})
   }
 }
