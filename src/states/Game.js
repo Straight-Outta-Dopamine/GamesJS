@@ -144,7 +144,6 @@ export default class extends Phaser.State {
     }
     this.game.physics.arcade.collide(this.player, this.platforms)
     this.game.physics.arcade.collide(this.player, this.ground)
-    // this.game.physics.arcade.collide(this.player, this.crate)
     this.game.physics.arcade.overlap(this.crates, this.player, this.crateAndPlayerCollisionHandler, null, this)
     this.game.physics.arcade.overlap(this.virus, this.player, this.virusAndPlayerCollisionHandler, null, this)
   }

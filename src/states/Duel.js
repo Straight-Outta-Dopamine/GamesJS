@@ -84,7 +84,7 @@ export default class extends Phaser.State {
       this.nextFire = this.game.time.now + this.fireRate;
 
       const bullet = this.bullets.getFirstExists(false)
-      bullet.scale.set(0.05)
+      bullet.scale.set(0.1)
 
       bullet.reset(this.player.position.x, this.player.position.y)
 

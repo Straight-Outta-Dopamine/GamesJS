@@ -34,9 +34,6 @@ export class Player extends Phaser.TileSprite {
     } else {
        this.animations.play('idle', 24, false)
     }
-    //if (!this.body.onFloor() && !this.body.touching.down) {
-    //   this.animations.play('idle', 24, false)
-    // }
     if ((this.jumpButton.isDown || this.jumpButton2.isDown) && (this.body.onFloor() || this.body.touching.down)) {
       this.body.velocity.y = this.jumpHeight;
     }
