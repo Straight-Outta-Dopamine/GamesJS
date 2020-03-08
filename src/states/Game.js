@@ -10,9 +10,6 @@ export default class extends Phaser.State {
   preload () { }
 
   create () {
-    this.map = this.game.add.tilemap('level01')
-    this.map.addTilesetImage('tiles')
-
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
     this.musicAudio = this.game.add.audio('music')
@@ -131,7 +128,7 @@ export default class extends Phaser.State {
     }
     if (this.game.time.now > this.platformTime) {
       const platformX = this.world.bounds.right + 50
-      const platformY = !this.platformFlag ? 400 : this.world.bounds.top + 300
+      const platformY = !this.platformFlag ? this.world.bounds.bottom - 250 : this.world.bounds.top + 300
       this.platformFlag = !this.platformFlag
 
       const platform = this.platforms.getFirstExists(false)
