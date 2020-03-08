@@ -36,6 +36,8 @@ export default class extends Phaser.State {
     this.load.image('gameOverText', 'assets/images/game_over.png')
     this.load.audio('ambulance', 'assets/audio/ambulance.wav')
     this.load.audio('music', 'assets/audio/music.mp3')
+    this.load.audio('evilLaugh', 'assets/audio/evil_laugh.wav')
+    this.load.audio('gunshot', 'assets/audio/gunshot.wav')
     this.load.audio('jumpSound', 'assets/audio/jump_sound.wav')
     this.load.tilemap('level01', 'http://examples.phaser.io/assets/tilemaps/maps/features_test.json', null, Phaser.Tilemap.TILED_JSON)
   }

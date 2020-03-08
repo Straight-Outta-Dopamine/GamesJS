@@ -12,6 +12,9 @@ export default class extends Phaser.State {
   create () {
     this.ambulanceAudio = this.game.add.audio('ambulance')
     this.ambulanceAudio.loopFull()
+    this.evilLaughAudio = this.game.add.audio('evilLaugh')
+    this.evilLaughAudio.play()
+    this.gunshotAudio = this.game.add.audio('gunshot')
 
     this.readyFlag = false
 
@@ -42,7 +45,8 @@ export default class extends Phaser.State {
     this.viruses.setAll('body.bounce.x', 1)
     this.viruses.setAll('body.bounce.y', 1)
 
-    for (let i = 0; i < 10; i++) {
+    this.virusesCount = 10
+    for (let i = 0; i < this.virusesCount; i++) {
       const virus = this.viruses.getFirstDead()
       virus.scale.set(0.4)
       const posX = this.rnd.integerInRange(100, config.gameWidth - 600)
@@ -76,6 +80,10 @@ export default class extends Phaser.State {
 
   update () {
     if (this.readyFlag) {
+      if (this.virusesCount <= 0) {
+        this.ambulanceAudio.stop()
+        this.state.start('Game', true, false, {score: this.score})
+      }
       this.game.physics.arcade.collide(this.viruses)
 
       this.viruses.forEach(virus => {
@@ -92,6 +100,7 @@ export default class extends Phaser.State {
 
   fire () {
     if (this.game.time.now > this.nextFire && this.bullets.countDead() > 0) {
+      this.gunshotAudio.play()
       this.nextFire = this.game.time.now + this.fireRate;
 
       const bullet = this.bullets.getFirstExists(false)
@@ -103,12 +112,14 @@ export default class extends Phaser.State {
     }
   }
 
-  virusAndBulletCollisionHandler(virus, bullet) {
+  virusAndBulletCollisionHandler (virus, bullet) {
     virus.kill()
     bullet.kill()
+    this.virusesCount--
   }
 
-  virusAndPlayerCollisionHandler(player, virus) {
+  virusAndPlayerCollisionHandler (player, virus) {
+    this.ambulanceAudio.stop()
     this.state.start('GameOver', true, false, {score: this.score})
   }
 }

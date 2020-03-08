@@ -4,7 +4,9 @@ import config from '../config'
 import {Player} from '../sprites/Player'
 
 export default class extends Phaser.State {
-  init () { }
+  init (payload) {
+    this.score = payload ? +payload.score : 0
+  }
   preload () { }
 
   create () {
@@ -107,14 +109,12 @@ export default class extends Phaser.State {
     this.player.smoothed = false
     this.player.scale.set(0.5)
 
-    this.score = 0
-
     this.scoreText = this.game.add.text(10, 10, 'Score: ' +  this.score, {
       font: '34px Times New Roman',
       fill: '#fff'
     })
 
-    setInterval(() => {
+    this.scoreInterval = setInterval(() => {
       this.score += 10
       this.scoreText.text = 'Score: ' + this.score
     }, 1000)
@@ -199,7 +199,9 @@ export default class extends Phaser.State {
     }
   }
 
-  virusAndPlayerCollisionHandler (virus, player) {
+  virusAndPlayerCollisionHandler () {
+    this.musicAudio.stop()
+    clearInterval(this.scoreInterval)
     this.state.start('Duel', true, false, {score: this.score})
   }
 
