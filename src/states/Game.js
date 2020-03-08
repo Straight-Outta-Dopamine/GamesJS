@@ -92,6 +92,18 @@ export default class extends Phaser.State {
     this.player.smoothed = false
     this.player.scale.set(0.5)
 
+    this.score = 0
+
+    this.scoreText = this.game.add.text(10, 10, 'Score: ' +  this.score, {
+      font: '34px Times New Roman',
+      fill: '#fff'
+    })
+
+    setInterval(() => {
+      this.score += 10
+      this.scoreText.text = 'Score: ' + this.score
+    }, 1000)
+
     this.game.add.existing(this.player)
 
   }

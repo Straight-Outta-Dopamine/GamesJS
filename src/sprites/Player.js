@@ -9,8 +9,11 @@ export class Player extends Phaser.TileSprite {
     this.animations.add('idle', [4])
     this.game.physics.arcade.enable(this)
     this.leftArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT)
+    this.leftArrow2 = this.game.input.keyboard.addKey(Phaser.Keyboard.A)
     this.rightArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
+    this.rightArrow2 = this.game.input.keyboard.addKey(Phaser.Keyboard.D)
     this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.UP)
+    this.jumpButton2 = this.game.input.keyboard.addKey(Phaser.Keyboard.W)
 
     this.speed = 10
     this.jumpHeight = -800
@@ -18,12 +21,12 @@ export class Player extends Phaser.TileSprite {
 
   update () {
     // this.body.velocity.x = -300
-    if (this.leftArrow.isDown) {
+    if (this.leftArrow.isDown || this.leftArrow2.isDown) {
       if (this.body.onFloor() ||this.body.touching.down) {
         this.animations.play('walk', 24, true)
       }
       this.position.x -= this.speed
-    } else if (this.rightArrow.isDown) {
+    } else if (this.rightArrow.isDown || this.rightArrow2.isDown) {
       if (this.body.onFloor() ||this.body.touching.down) {
         this.animations.play('walk', 24, true)
       }
@@ -34,7 +37,7 @@ export class Player extends Phaser.TileSprite {
     //if (!this.body.onFloor() && !this.body.touching.down) {
     //   this.animations.play('idle', 24, false)
     // }
-    if (this.jumpButton.isDown && (this.body.onFloor() || this.body.touching.down)) {
+    if ((this.jumpButton.isDown || this.jumpButton2.isDown) && (this.body.onFloor() || this.body.touching.down)) {
       this.body.velocity.y = this.jumpHeight;
     }
     this.checkWorldBounds()
