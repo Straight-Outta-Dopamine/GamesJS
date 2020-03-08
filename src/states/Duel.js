@@ -8,11 +8,10 @@ export default class extends Phaser.State {
   preload () { }
 
   create () {
-    this.map = this.game.add.tilemap('level01')
-    this.map.addTilesetImage('tiles')
-
     this.ambulanceAudio = this.game.add.audio('ambulance')
     this.ambulanceAudio.loopFull()
+
+    this.readyFlag = false
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
 
@@ -37,9 +36,9 @@ export default class extends Phaser.State {
     this.viruses.createMultiple(30, 'virus')
     this.viruses.setAll('anchor.x', 0.5)
     this.viruses.setAll('anchor.y', 0.5)
-    this.viruses.setAll('body.collideWorldBounds', true);
-    this.viruses.setAll('body.bounce.x', 1);
-    this.viruses.setAll('body.bounce.y', 1);
+    this.viruses.setAll('body.collideWorldBounds', true)
+    this.viruses.setAll('body.bounce.x', 1)
+    this.viruses.setAll('body.bounce.y', 1)
 
     for (let i = 0; i < 10; i++) {
       const virus = this.viruses.getFirstDead()
@@ -63,20 +62,30 @@ export default class extends Phaser.State {
     this.player.scale.set(0.5)
 
     this.game.add.existing(this.player)
+
+    const killTheVirus = this.game.add.sprite(this.world.centerX - 200, this.world.centerY - 200, 'killTheVirusText')
+    killTheVirus.scale.set(1.5)
+
+    setTimeout(() => {
+      this.readyFlag = true
+      killTheVirus.destroy()
+    }, 2000)
   }
 
   update () {
-    this.game.physics.arcade.collide(this.viruses)
+    if (this.readyFlag) {
+      this.game.physics.arcade.collide(this.viruses)
 
-    this.viruses.forEach(virus => {
-      this.game.physics.arcade.moveToObject(virus, this.player, 200)
-    })
-    if (this.game.input.activePointer.isDown) {
-      this.fire()
+      this.viruses.forEach(virus => {
+        this.game.physics.arcade.moveToObject(virus, this.player, 200)
+      })
+      if (this.game.input.activePointer.isDown) {
+        this.fire()
+      }
+
+      this.game.physics.arcade.overlap(this.viruses, this.bullets, this.virusAndBulletCollisionHandler, null, this)
+      this.game.physics.arcade.overlap(this.viruses, this.player, this.virusAndPlayerCollisionHandler, null, this)
     }
-
-    this.game.physics.arcade.overlap(this.viruses, this.bullets, this.virusAndBulletCollisionHandler, null, this)
-    this.game.physics.arcade.overlap(this.viruses, this.player, this.virusAndPlayerCollisionHandler, null, this)
   }
 
   fire () {

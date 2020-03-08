@@ -30,6 +30,8 @@ export default class extends Phaser.State {
     this.load.image('crate', 'assets/images/crate.png')
     this.load.image('menu', 'assets/images/menu_screen.png')
     this.load.image('startBtn', 'assets/images/start_button.png')
+    this.load.image('killTheVirusText', 'assets/images/kill_the_virus.png')
+    this.load.image('bin', 'assets/images/trash_bin.png')
     this.load.audio('ambulance', 'assets/audio/ambulance.wav')
     this.load.audio('music', 'assets/audio/music.mp3')
     this.load.audio('jumpSound', 'assets/audio/jump_sound.wav')

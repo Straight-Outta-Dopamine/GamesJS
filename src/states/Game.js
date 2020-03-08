@@ -34,6 +34,16 @@ export default class extends Phaser.State {
     this.startBg.body.checkWorldBounds = true
     this.startBg.body.velocity.x = -300
 
+    this.bins = this.game.add.group()
+    this.bins.enableBody = true
+    this.bins.physicsBodyType = Phaser.Physics.ARCADE
+    this.bins.createMultiple(50, 'bin')
+    this.bins.setAll('anchor.x', 0.5)
+    this.bins.setAll('anchor.y', 1)
+    this.bins.setAll('outOfBoundsKill', true)
+    this.bins.setAll('body.immovable', true)
+    this.bins.setAll('checkWorldBounds', true)
+
     this.platformTime = 200
     this.platforms = this.game.add.group()
     this.platforms.enableBody = true
@@ -113,6 +123,7 @@ export default class extends Phaser.State {
   }
 
   update () {
+    this.virus.alpha = 1
     this.virus.position.y = this.player.position.y - 100
 
     if (this.virus.body.velocity.x < 0 && this.virus.position.x < this.virusInitialX) {
@@ -125,12 +136,18 @@ export default class extends Phaser.State {
 
       const platform = this.platforms.getFirstExists(false)
 
-      let rnd = this.rnd.integerInRange(1, 3)
+      let rnd = this.rnd.integerInRange(1, 4)
       if (rnd === 3) {
         const crate = this.crates.getFirstExists(false)
         crate.reset(platformX, platformY - 30)
         crate.scale.set(0.5)
         crate.body.velocity.x = -300
+      }
+      if (rnd === 4) {
+        const bin = this.bins.getFirstExists(false)
+        bin.reset(platformX, platformY - 30)
+        bin.scale.set(0.2)
+        bin.body.velocity.x = -300
       }
 
       platform.reset(platformX, platformY)
@@ -148,8 +165,10 @@ export default class extends Phaser.State {
     }
     this.game.physics.arcade.collide(this.player, this.platforms)
     this.game.physics.arcade.collide(this.player, this.ground)
+    this.game.physics.arcade.collide(this.player, this.bins)
     this.game.physics.arcade.overlap(this.crates, this.player, this.crateAndPlayerCollisionHandler, null, this)
     this.game.physics.arcade.overlap(this.virus, this.player, this.virusAndPlayerCollisionHandler, null, this)
+    this.game.physics.arcade.overlap(this.virus, this.platforms, this.virusAndObstaclesCollisionHandler, null, this)
   }
 
   render () {
@@ -188,5 +207,9 @@ export default class extends Phaser.State {
 
   virusAndPlayerCollisionHandler (virus, player) {
     this.game.state.start('Duel')
+  }
+
+  virusAndObstaclesCollisionHandler () {
+    this.virus.alpha = 0.5
   }
 }
