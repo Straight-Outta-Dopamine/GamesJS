@@ -28,11 +28,13 @@ export default class extends Phaser.State {
     this.load.image('bullet', 'assets/images/bullet.png')
     this.load.image('stomach', 'assets/images/stomach.jpg')
     this.load.image('crate', 'assets/images/crate.png')
+    this.load.image('menu', 'assets/images/menu_screen.png')
+    this.load.image('startBtn', 'assets/images/start_button.png')
     this.load.audio('ambulance', 'assets/audio/ambulance.wav')
     this.load.tilemap('level01', 'http://examples.phaser.io/assets/tilemaps/maps/features_test.json', null, Phaser.Tilemap.TILED_JSON)
   }
 
   create () {
-    this.state.start('Game')
+    this.state.start('Start')
   }
 }

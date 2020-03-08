@@ -6,7 +6,7 @@ export class Player extends Phaser.TileSprite {
     super(game, x, y, width, height, key)
     // this.anchor.setTo(0.5)
     this.animations.add('walk')
-    this.animations.add('idle', [4])
+    this.animations.add('idle', [3])
     this.game.physics.arcade.enable(this)
     this.leftArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT)
     this.leftArrow2 = this.game.input.keyboard.addKey(Phaser.Keyboard.A)
