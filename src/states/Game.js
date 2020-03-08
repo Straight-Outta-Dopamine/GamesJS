@@ -13,6 +13,9 @@ export default class extends Phaser.State {
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
+    this.musicAudio = this.game.add.audio('music')
+    this.musicAudio.loopFull()
+
     this.bgTime = 200
     this.bgs = this.game.add.group()
     this.bgs.enableBody = true
@@ -41,6 +44,8 @@ export default class extends Phaser.State {
     this.platforms.setAll('outOfBoundsKill', true)
     this.platforms.setAll('body.immovable', true)
     this.platforms.setAll('checkWorldBounds', true)
+
+    this.platformFlag = false
 
     this.crates = this.game.add.group()
     this.crates.enableBody = true
@@ -72,7 +77,7 @@ export default class extends Phaser.State {
     this.virus.scale.set(1)
     this.virus.enableBody = true
     this.virus.body.immovable = true
-    this.virus.body.velocity.x = 30
+    this.virus.body.velocity.x = 40
     // this.virus.body.checkWorldBounds = true
 
     //  Set the world (global) gravity
@@ -105,11 +110,9 @@ export default class extends Phaser.State {
     }, 1000)
 
     this.game.add.existing(this.player)
-
   }
 
   update () {
-    // this.game.physics.arcade.moveToObject(this.virus, this.player, 30)
     this.virus.position.y = this.player.position.y - 100
 
     if (this.virus.body.velocity.x < 0 && this.virus.position.x < this.virusInitialX) {
@@ -117,7 +120,8 @@ export default class extends Phaser.State {
     }
     if (this.game.time.now > this.platformTime) {
       const platformX = this.world.bounds.right + 50
-      const platformY = this.rnd.integerInRange(500, this.world.bounds.bottom - 600)
+      const platformY = !this.platformFlag ? 400 : this.world.bounds.top + 300
+      this.platformFlag = !this.platformFlag
 
       const platform = this.platforms.getFirstExists(false)
 
@@ -132,7 +136,7 @@ export default class extends Phaser.State {
       platform.reset(platformX, platformY)
       platform.body.velocity.x = -300
       platform.scale.set(0.4, 0.3)
-      this.platformTime = this.game.time.now + 1500;
+      this.platformTime = this.game.time.now + this.rnd.integerInRange(1500, 3000);
     }
     if (this.game.time.now > this.bgTime) {
       const bg = this.bgs.getFirstExists(false)

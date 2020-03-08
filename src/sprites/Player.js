@@ -15,27 +15,31 @@ export class Player extends Phaser.TileSprite {
     this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.UP)
     this.jumpButton2 = this.game.input.keyboard.addKey(Phaser.Keyboard.W)
 
-    this.speed = 10
+    this.jumpAudio = this.game.add.audio('jumpSound')
+
+    this.speed = 300
     this.jumpHeight = -800
   }
 
   update () {
     // this.body.velocity.x = -300
+    this.body.velocity.x = 0
     if (this.leftArrow.isDown || this.leftArrow2.isDown) {
-      if (this.body.onFloor() ||this.body.touching.down) {
+      if (this.body.onFloor() || this.body.touching.down) {
         this.animations.play('walk', 24, true)
       }
-      this.position.x -= this.speed
+      this.body.velocity.x = -this.speed
     } else if (this.rightArrow.isDown || this.rightArrow2.isDown) {
       if (this.body.onFloor() ||this.body.touching.down) {
         this.animations.play('walk', 24, true)
       }
-      this.position.x += this.speed
+      this.body.velocity.x = this.speed
     } else {
        this.animations.play('idle', 24, false)
     }
     if ((this.jumpButton.isDown || this.jumpButton2.isDown) && (this.body.onFloor() || this.body.touching.down)) {
       this.body.velocity.y = this.jumpHeight;
+      this.jumpAudio.play()
     }
     this.checkWorldBounds()
   }
